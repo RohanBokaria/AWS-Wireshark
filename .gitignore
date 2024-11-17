@@ -1,0 +1,21 @@
+# Sensitive files
+*.pem
+*.key
+*.crt
+
+# Terraform state and cache files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.backup
+
+# Terraform CLI files
+crash.log
+override.tf
+override.tf.json
+terraform.tfvars
+*.tfplan
+
+# OS-specific files
+.DS_Store
+Thumbs.db
