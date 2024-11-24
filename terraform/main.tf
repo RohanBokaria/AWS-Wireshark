@@ -63,7 +63,7 @@ resource "aws_instance" "project_ec2" {
                   for file in /home/ec2-user/csv_data/*.csv; do
                       if [ -f "$file" ]; then
                           echo "Processing $file"
-                          python3 /home/ec2-user/csv_processor.py $file >> /home/ec2-user/csv_data/ingestion_log.txt
+                          python3 /home/ec2-user/other_folder/csv_processor.py $file >> /home/ec2-user/csv_data/ingestion_log.txt
                           rm $file
                       fi
                   done
