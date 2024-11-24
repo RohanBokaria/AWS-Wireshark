@@ -54,7 +54,24 @@ resource "aws_instance" "project_ec2" {
               cd AWS-Wireshark/scripts
               pip3 install -r ../requirements.txt
               python3 setup_database.py
+              # Set up a directory for CSV file ingestion
+              mkdir -p /home/ec2-user/csv_data
+              touch /home/ec2-user/csv_data/ingestion_log.txt
+
+              # Continuously check for new CSV files and process them
+              while true; do
+                  for file in /home/ec2-user/csv_data/*.csv; do
+                      if [ -f "$file" ]; then
+                          echo "Processing $file"
+                          python3 /home/ec2-user/csv_processor.py $file >> /home/ec2-user/csv_data/ingestion_log.txt
+                          rm $file
+                      fi
+                  done
+                  sleep 5  # Sleep for 5 seconds before checking again
+              done
               EOF
+              
+              
 }
 
 # Output Variables
