@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native"]
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model PingPong {
+    id               Int    @id @unique @default(autoincrement())
+    order_id         Int    @db.Int
+    source_ip        String @db.VarChar(20)
+    gateway_ip       String @db.VarChar(20)
+    trader_in_sec    BigInt @db.BigInt
+    trader_in_nano   BigInt @db.BigInt
+    trader_out_sec   BigInt @db.BigInt
+    trader_out_nano  BigInt @db.BigInt
+    gateway_in_sec   BigInt @db.BigInt
+    gateway_in_nano  BigInt @db.BigInt
+    gateway_out_sec  BigInt @db.BigInt
+    gateway_out_nano BigInt @db.BigInt
+    ome_in_sec       BigInt @db.BigInt
+    ome_in_nano      BigInt @db.BigInt
+    ome_out_sec      BigInt @db.BigInt
+    ome_out_nano     BigInt @db.BigInt
+    ticker_out_sec   BigInt @db.BigInt
+    ticker_out_nano  BigInt @db.BigInt
+    latency          Float  @db.Float
+}
+
+model OrderRequests {
+    order_id         String @id @unique @db.VarChar(50)
+    source           String @db.VarChar(50)
+    destination      String @db.VarChar(50)
+    ack_tstamp_sec   BigInt @db.BigInt
+    ack_tstamp_nano  BigInt @db.BigInt
+    gateway_in_sec   BigInt @db.BigInt
+    gateway_in_nano  BigInt @db.BigInt
+    ome_in_sec       BigInt @db.BigInt
+    ome_in_nano      BigInt @db.BigInt
+    ticker_in_sec    BigInt @db.BigInt
+    ticker_in_nano   BigInt @db.BigInt
+    public_out_sec   BigInt @db.BigInt
+    public_out_nano  BigInt @db.BigInt
+    private_out_sec  BigInt @db.BigInt
+    private_out_nano BigInt @db.BigInt
+}
+
+model DataRequests {
+    order_id         String @id @unique @db.VarChar(50)
+    source           String @db.VarChar(50)
+    destination      String @db.VarChar(50)
+    ack_tstamp_sec   BigInt @db.BigInt
+    ack_tstamp_nano  BigInt @db.BigInt
+    gateway_in_sec   BigInt @db.BigInt
+    gateway_in_nano  BigInt @db.BigInt
+    dropcopy_in_sec  BigInt @db.BigInt
+    dropcopy_in_nano BigInt @db.BigInt
+    private_out_sec  BigInt @db.BigInt
+    private_out_nano BigInt @db.BigInt
+}
+
+model RawPCAP {
+    id             Int    @id @unique @default(autoincrement())
+    timestamp_sec  BigInt @db.BigInt
+    timestamp_nano BigInt @db.BigInt
+    capture_length Int    @db.Int
+    total_length   Int    @db.Int
+    raw_data       Json   @db.Json
+}
+
+model Node {
+    host_name   String @id @unique @db.VarChar(20)
+    port        String @db.VarChar(20)
+    message_num Int    @db.Int
+    status      Int    @db.Int
+    type        String @db.VarChar(20)
+}

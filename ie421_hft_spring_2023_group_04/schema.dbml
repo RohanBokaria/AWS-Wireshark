@@ -1,0 +1,74 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table PingPong {
+  id Int [pk, increment]
+  order_id Int [not null]
+  source_ip String [not null]
+  gateway_ip String [not null]
+  trader_in_sec BigInt [not null]
+  trader_in_nano BigInt [not null]
+  trader_out_sec BigInt [not null]
+  trader_out_nano BigInt [not null]
+  gateway_in_sec BigInt [not null]
+  gateway_in_nano BigInt [not null]
+  gateway_out_sec BigInt [not null]
+  gateway_out_nano BigInt [not null]
+  ome_in_sec BigInt [not null]
+  ome_in_nano BigInt [not null]
+  ome_out_sec BigInt [not null]
+  ome_out_nano BigInt [not null]
+  ticker_out_sec BigInt [not null]
+  ticker_out_nano BigInt [not null]
+  latency Float [not null]
+}
+
+Table OrderRequests {
+  order_id String [pk]
+  source String [not null]
+  destination String [not null]
+  ack_tstamp_sec BigInt [not null]
+  ack_tstamp_nano BigInt [not null]
+  gateway_in_sec BigInt [not null]
+  gateway_in_nano BigInt [not null]
+  ome_in_sec BigInt [not null]
+  ome_in_nano BigInt [not null]
+  ticker_in_sec BigInt [not null]
+  ticker_in_nano BigInt [not null]
+  public_out_sec BigInt [not null]
+  public_out_nano BigInt [not null]
+  private_out_sec BigInt [not null]
+  private_out_nano BigInt [not null]
+}
+
+Table DataRequests {
+  order_id String [pk]
+  source String [not null]
+  destination String [not null]
+  ack_tstamp_sec BigInt [not null]
+  ack_tstamp_nano BigInt [not null]
+  gateway_in_sec BigInt [not null]
+  gateway_in_nano BigInt [not null]
+  dropcopy_in_sec BigInt [not null]
+  dropcopy_in_nano BigInt [not null]
+  private_out_sec BigInt [not null]
+  private_out_nano BigInt [not null]
+}
+
+Table RawPCAP {
+  id Int [pk, increment]
+  timestamp_sec BigInt [not null]
+  timestamp_nano BigInt [not null]
+  capture_length Int [not null]
+  total_length Int [not null]
+  raw_data Json [not null]
+}
+
+Table Node {
+  host_name String [pk]
+  port String [not null]
+  message_num Int [not null]
+  status Int [not null]
+  type String [not null]
+}

@@ -1,0 +1,81 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+NUM_TRADERS = 2
+NUM_EXCHANGES = 2
+
+env = {}
+File.read("./src/.env").split("\n").each do |ef|
+  env[ef.split("=")[0]] = ef.split("=")[1].to_s.rstrip
+end
+
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "centos7_mini"
+  config.vm.box_url = "https://davidl.web.engr.illinois.edu/vms/centos7_mini.box"
+  config.vm.box_download_checksum = "4897db055b26323d6d8d4a3f14b9c7d5a5e770e5d4c0185c0d2915c832719a1f"
+  config.vm.box_download_checksum_type = "sha256"
+  config.ssh.insert_key = false
+
+  # Netcap Web Application
+  # Frontend (react.js)
+  config.vm.define "netcap_frontend" do |front|
+    front.vm.hostname = "netcap-frontend"
+    
+    front.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", env['MEM_FRONTEND']]
+      vb.customize ["modifyvm", :id, "--cpus", env['CPU_FRONTEND']]
+    end
+  
+    front.vm.network "private_network", ip: env['FRONTEND_IP']
+    front.vm.provision "ScriptRunAsVagrantUser", privileged: false, type:"shell", path: "#{env['PROVISION_PATH']}/prov_netcap_front.sh", env: { "CUR_IP" => "#{env['FRONTEND_IP']}" }
+
+  end
+
+  # Backend (nest.js and MySQL)
+  config.vm.define "netcap_backend" do |back|
+    back.vm.hostname = "netcap-backend"
+    
+    back.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", env['MEM_BACKEND']]
+      vb.customize ["modifyvm", :id, "--cpus", env['CPU_BACKEND']]
+    end
+  
+    back.vm.network "private_network", ip: env['BACKEND_IP']
+    back.vm.provision "ScriptRunAsVagrantUser", privileged: false, type:"shell", path: "#{env['PROVISION_PATH']}/prov_netcap_back.sh", env: { "CUR_IP" => "#{env['BACKEND_IP']}" }
+  end
+
+  # Python Exchange
+  NUM_EXCHANGES.times do |id|
+    config.vm.define "fix_exchange_#{id}" do |exchange|
+      exchange.vm.hostname = "fix-exchange-#{id}"
+    
+      exchange.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", env['MEM_EXCHANGE']]
+        vb.customize ["modifyvm", :id, "--cpus", env['CPU_EXCHANGE']]
+      end
+    
+      exchange.vm.network "private_network", ip: "#{env['EXCHANGE_BASE_IP']}#{(env['EXCHANGE_START_OCTET'].to_i + id)}"
+      exchange.vm.provision "ScriptRunAsVagrantUser", privileged: false, type:"shell", path: "#{env['PROVISION_PATH']}/prov_fix_exchange.sh", env: { "CUR_IP" => "#{env['EXCHANGE_BASE_IP']}#{(env['EXCHANGE_START_OCTET'].to_i + id)}" }
+    end
+  end
+
+  # # Python Traders
+  NUM_TRADERS.times do |id|
+    config.vm.define "fix_trader_#{id}" do |trader|
+      trader.vm.hostname = "fix-trader-#{id}"
+      
+      trader.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", env['MEM_TRADER']]
+        vb.customize ["modifyvm", :id, "--cpus", env['CPU_TRADER']]
+      end
+    
+      trader.vm.network "private_network", ip: "#{env['TRADER_BASE_IP']}#{(env['TRADER_START_OCTET'].to_i + id)}"
+      trader.vm.provision "ScriptRunAsVagrantUser", privileged: false, type:"shell", path: "#{env['PROVISION_PATH']}/prov_fix_trader.sh", env: { "CUR_IP" => "#{env['TRADER_BASE_IP']}#{(env['TRADER_START_OCTET'].to_i + id)}" }
+
+    end
+  end
+
+end
+
